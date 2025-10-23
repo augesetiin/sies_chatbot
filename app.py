@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 from datetime import timedelta
 import re
 
-# --- Page Configuration ---
+# --- Page Configuration --- final code the goat code 
 st.set_page_config(
     page_title="SIES College - Admission Assistant",
     page_icon="🎓",
@@ -657,9 +657,9 @@ class CollegeAssistant:
         # Prioritized keywords to avoid overlaps (e.g., economics before cs)
         dept_keywords = {
             'economics': ['economics', 'econ'],
+            'commerce': ['commerce', 'comm', 'bcom', 'b.com'],
             'it': ['it', 'information technology'],
             'cs': ['cs', 'computer science'],
-            'commerce': ['commerce', 'comm'],
             'bms': ['bms', 'management'],
             'bammc': ['bammc', 'multimedia'],
             'accountancy': ['accountancy', 'accounting'],
