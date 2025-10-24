@@ -487,37 +487,102 @@ FACULTY_DATA = {
     },
 }
 
-# FAQs (excluding fee structure to handle separately)
-FAQS = [
-    {
-        'q': 'Does the college provide scholarships?',
-        'a': 'Yes. Scholarships are available for SC/ST/OBC, economically weaker students, and merit-based achievers as per Government of Maharashtra and University of Mumbai rules.'
+# Individual FAQ responses
+FAQ_RESPONSES = {
+    'scholarship': {
+        'keywords': ['scholarship', 'scholarships', 'financial aid', 'financial assistance'],
+        'response': """
+<div class="info-box">
+<b>Scholarships</b><br><br>
+Yes. Scholarships are available for SC/ST/OBC, economically weaker students, and merit-based achievers as per Government of Maharashtra and University of Mumbai rules.
+</div>
+"""
     },
-    {
-        'q': 'Is there a placement cell?',
-        'a': 'Yes. The Placement Cell connects students with top recruiters in IT, Banking, Media, Commerce, and Management fields. Regular training and internship drives are conducted.'
+    'placement': {
+        'keywords': ['placement', 'placements', 'placement cell', 'job placement', 'campus placement', 'recruiters'],
+        'response': """
+<div class="info-box">
+<b>Placement Cell</b><br><br>
+Yes. The Placement Cell connects students with top recruiters in IT, Banking, Media, Commerce, and Management fields. Regular training and internship drives are conducted.<br><br>
+<b>Top Recruiting Companies:</b><br>
+{companies}<br><br>
+<a href="https://siesascn.edu.in/placement" target="_blank">Visit Placement Page for More Details</a>
+</div>
+""",
+        'link': 'https://siesascn.edu.in/placement'
     },
-    {
-        'q': 'What is the attendance policy?',
-        'a': 'Students must maintain at least 75% attendance in each subject to be eligible for appearing in university examinations.'
+    'attendance': {
+        'keywords': ['attendance', 'attendance policy', 'attendance rule', 'attendance requirement', 'minimum attendance'],
+        'response': """
+<div class="info-box">
+<b>Attendance Policy</b><br><br>
+Students must maintain at least 75% attendance in each subject to be eligible for appearing in university examinations.
+</div>
+"""
     },
-    {
-        'q': 'Does the college have a library?',
-        'a': 'Yes. The college has a fully equipped library with e-resources, journals, and a digital learning hub.'
+    'library': {
+        'keywords': ['library', 'library facilities'],
+        'response': """
+<div class="info-box">
+<b>Library Facilities</b><br><br>
+Yes. The college has a fully equipped library with e-resources, journals, and a digital learning hub.
+</div>
+"""
     },
-    {
-        'q': 'Are there extracurricular activities?',
-        'a': 'Yes. Students can join NSS, NCC, cultural clubs, sports teams, and various student-led committees.'
+    'extracurricular': {
+        'keywords': ['extracurricular', 'extracurricular activities', 'activities', 'clubs', 'nss', 'ncc'],
+        'response': """
+<div class="info-box">
+<b>Extracurricular Activities</b><br><br>
+Yes. Students can join NSS, NCC, cultural clubs, sports teams, and various student-led committees.
+</div>
+"""
     },
-    {
-        'q': 'Does the college provide hostel facilities?',
-        'a': 'No. The college does not have its own hostel but assists students in finding safe accommodations nearby.'
+    'hostel': {
+        'keywords': ['hostel', 'hostel facilities', 'accommodation', 'hostel facility'],
+        'response': """
+<div class="info-box">
+<b>Hostel Facilities</b><br><br>
+No. The college does not have its own hostel but assists students in finding safe accommodations nearby.
+</div>
+"""
     },
-    {
-        'q': 'Does the college have an anti-ragging policy?',
-        'a': 'Yes, the college has a dedicated Anti-Ragging Committee and promotes anti-ragging initiatives to ensure a safe and welcoming environment for all students.'
+    'anti_ragging': {
+        'keywords': ['anti-ragging', 'anti ragging', 'ragging', 'ragging policy', 'ragging rule'],
+        'response': """
+<div class="info-box">
+<b>Anti-Ragging Policy</b><br><br>
+Yes, the college has a dedicated Anti-Ragging Committee and promotes anti-ragging initiatives to ensure a safe and welcoming environment for all students.
+</div>
+"""
+    },
+    'minority': {
+        'keywords': ['minority', 'minority quota', 'south indian', 'tamil', 'linguistic minority', 'olm'],
+        'response': """
+<div class="info-box">
+<b>SIES (Nerul) College South Indian Minority Quota FAQ</b><br><br>
+
+<b>Q1: Does SIES (Nerul) College have a minority quota for South Indian students?</b><br>
+A: Yes. The college offers a linguistic minority quota specifically for South Indian students.<br><br>
+
+<b>Q2: Which students are the primary focus of this quota?</b><br>
+A: The primary focus of the minority quota is for Tamil-speaking students. They are given first preference during the admission process under this category.<br><br>
+
+<b>Q3: What if I am a South Indian but do not speak Tamil? Can I still apply?</b><br>
+A: Yes, you may still be able to apply. The college considers applications from "Other Linguistic Minorities" (OLM) from South India if seats remain available after all eligible Tamil-speaking candidates have been admitted.<br><br>
+
+<b>Q4: What is the "Other Linguistic Minorities" (OLM) category?</b><br>
+A: This category is for South Indian students who speak languages other than Tamil, such as Malayalam, Telugu, or Kannada. Applicants in this category are considered for admission under the minority quota only after the Tamil minority admissions are complete and if there are still vacant seats.<br><br>
+
+<b>Q5: So, who gets priority in the South Indian minority quota?</b><br>
+A: Tamil-speaking students are given the first priority for seats reserved under the linguistic minority quota.<br><br>
+
+<a href="https://siesascn.edu.in/docs/Tamil%20Minority%20Declaration%20-%202025-26.pdf" target="_blank">Download Tamil Minority Declaration Form</a>
+</div>
+""",
+        'link': 'https://siesascn.edu.in/docs/Tamil%20Minority%20Declaration%20-%202025-26.pdf'
     }
-]
+}
 
 # Fee Structure Response
 FEE_STRUCTURE_RESPONSE = """
@@ -623,7 +688,7 @@ ADMISSION_PROCEDURE = """
 @st.cache_data(ttl=timedelta(hours=4))
 def scrape_data():
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
-    data = {"merit_lists": [], "admissions_link": "https://siesascn.edu.in/admissions"}
+    data = {"merit_lists": [], "admissions_link": "https://siesascn.edu.in/admissions", "placement_companies": []}
 
     try:
         resp = requests.get("https://siesascn.edu.in/admissions", headers=headers, timeout=15)
@@ -642,6 +707,39 @@ def scrape_data():
     except Exception:
         pass
 
+    # Scrape placement companies
+    try:
+        resp = requests.get("https://siesascn.edu.in/placement", headers=headers, timeout=15)
+        resp.raise_for_status()
+        soup = BeautifulSoup(resp.content, 'html.parser')
+        companies = []
+        
+        # Try to find company names (adjust selectors based on actual website structure)
+        for elem in soup.find_all(['h3', 'h4', 'li', 'p', 'div']):
+            text = elem.text.strip()
+            # Look for known company patterns
+            if any(keyword in text.lower() for keyword in ['pvt', 'ltd', 'limited', 'inc', 'corp', 'technologies', 'systems', 'solutions']):
+                if len(text) < 100 and text not in companies:
+                    companies.append(text)
+        
+        # Get top 5 unique companies
+        data['placement_companies'] = companies[:5] if companies else [
+            "TCS (Tata Consultancy Services)",
+            "Infosys",
+            "Wipro",
+            "Accenture",
+            "Cognizant"
+        ]
+    except Exception:
+        # Default companies if scraping fails
+        data['placement_companies'] = [
+            "TCS (Tata Consultancy Services)",
+            "Infosys",
+            "Wipro",
+            "Accenture",
+            "Cognizant"
+        ]
+
     return data
 
 # --- Chatbot Logic ---
@@ -654,7 +752,7 @@ class CollegeAssistant:
         if not any(word in q_lower for word in ["hod", "head of", "head", "department"]):
             return None
         
-        # Prioritized keywords to avoid overlaps (e.g., economics before cs)
+        # Prioritized keywords to avoid overlaps
         dept_keywords = {
             'economics': ['economics', 'econ'],
             'commerce': ['commerce', 'comm', 'bcom', 'b.com'],
@@ -667,7 +765,6 @@ class CollegeAssistant:
             'evs': ['evs', 'environmental'],
         }
         
-        # Check in order to prioritize economics
         for dept, keywords in dept_keywords.items():
             for kw in keywords:
                 if kw in q_lower:
@@ -709,10 +806,21 @@ class CollegeAssistant:
         
         return filtered
 
+    def detect_faq(self, question):
+        """Detect which specific FAQ is being asked"""
+        q_lower = question.lower()
+        
+        for faq_key, faq_data in FAQ_RESPONSES.items():
+            for keyword in faq_data['keywords']:
+                if keyword in q_lower:
+                    return faq_key
+        
+        return None
+
     def find_answer(self, question):
         q_lower = question.lower()
 
-        # Fee Structure queries (specific handling, before general FAQ)
+        # Fee Structure queries
         if any(word in q_lower for word in ["fee", "fees", "fee structure", "cost"]):
             return FEE_STRUCTURE_RESPONSE, "https://siesascn.edu.in/admissions"
 
@@ -726,8 +834,8 @@ class CollegeAssistant:
             jc_html += '</div>'
             return jc_html, None
 
-        # Library queries
-        if any(word in q_lower for word in ["library", "librarian", "library staff"]):
+        # Library queries - specific check
+        if 'librarian' in q_lower or 'library staff' in q_lower:
             lib_html = f"""
 <div class="info-box">
 <b>Library Staff</b><br><br>
@@ -737,13 +845,24 @@ The college has a fully equipped library with e-resources, journals, and a digit
 """
             return lib_html, None
 
-        # General FAQ queries (excluding fee structure)
-        if any(word in q_lower for word in ["faq", "frequently asked", "scholarships", "placement", "attendance", "hostel", "anti-ragging"]):
-            faq_html = '<div class="success-box"><b>Frequently Asked Questions (FAQ)</b><br><br>'
-            for faq in FAQS:
-                faq_html += f'<div class="faq-item"><b>{faq["q"]}</b><br>{faq["a"]}</div>'
-            faq_html += '</div>'
-            return faq_html, None
+        # Check for specific FAQ questions
+        faq_type = self.detect_faq(question)
+        if faq_type:
+            response = FAQ_RESPONSES[faq_type]['response']
+            
+            # Special handling for placement - add companies
+            if faq_type == 'placement':
+                companies_html = ""
+                for i, company in enumerate(self.data['placement_companies'], 1):
+                    companies_html += f'<div class="course-item">{i}. {company}</div>'
+                response = response.format(companies=companies_html)
+                return response, FAQ_RESPONSES[faq_type].get('link')
+            
+            # Special handling for minority - return with link
+            if faq_type == 'minority':
+                return response, FAQ_RESPONSES[faq_type].get('link')
+            
+            return response, FAQ_RESPONSES[faq_type].get('link')
 
         # Principal
         if any(word in q_lower for word in ["principal", "who is principal"]):
@@ -822,7 +941,7 @@ No merit lists found for {dept_name}. Check back soon!
             return html, None
 
         # All Courses
-        if any(w in q_lower for w in ["all courses", "courses offered"]):
+        if any(w in q_lower for w in ["course", "courses", "all courses", "courses offered", "available courses", "programs offered"]):
             html = '<div class="success-box"><b>All Courses at SIES College</b><br><br><b>Undergraduate:</b><br>'
             for course in UG_COURSES:
                 html += f'<div class="course-item">{course}</div>'
@@ -847,7 +966,7 @@ Our admission assistant can help with:<br>
 • Principal Information<br>
 • Junior College Details<br>
 • Library Staff<br>
-• FAQs<br><br>
+• FAQs (Scholarships, Placements, Attendance, Anti-Ragging, Minority Quota, etc.)<br><br>
 Please select an option or ask your question below.
 </div>
 """, None
@@ -958,8 +1077,8 @@ with st.sidebar:
         st.rerun()
     
     if st.button("FAQs", use_container_width=True):
-        st.session_state.messages.append({"role": "user", "content": "FAQs"})
-        resp, link = assistant.find_answer("FAQs")
+        st.session_state.messages.append({"role": "user", "content": "Tell me about scholarships, placements, and attendance"})
+        resp, link = assistant.find_answer("Tell me about scholarships, placements, and attendance")
         full_resp = resp + (f"\n\n[Visit Admissions Page]({link})" if link else "")
         st.session_state.messages.append({"role": "assistant", "content": full_resp})
         st.rerun()
